@@ -1,5 +1,6 @@
-import os
+import clock
 import sys
+import PyQt5.uic
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtWebEngineWidgets import *
@@ -32,7 +33,6 @@ class WebPage(QWebEngineView):
     def __init__(self, bus, direction, stop_num):
         QWebEngineView.__init__(self)
         self.stop_num = stop_num
-        self.resize(300, 500)
         self.settings().setAttribute(QWebEngineSettings.FullScreenSupportEnabled, True)
 
         self.load(QUrl("http://hastinfoweb.calgarytransit.com/hastinfoweb2/NextDepartures?StopFilterIdentifier=" + bus +
@@ -41,21 +41,31 @@ class WebPage(QWebEngineView):
         self.loadFinished.connect(self.on_load_finished)
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QWidget):
     def __init__(self, parent=None):
         # Initialize the Main Window
         super(MainWindow, self).__init__(parent)
         self.create_menu()
         self.add_web_widget()
+        self.setLayout(self.layout)
         self.show()
 
     def create_menu(self):
-        return
+        self.layout = QVBoxLayout()
+        top = QWidget()
+        top.setMinimumSize(400, 400)
+        top.setStyleSheet("background-color: red;")
+        clk = clock.Clock(parent=top)
+        clk.setFrameShape(QFrame.NoFrame)
+        clk.setStyleSheet("background-color:none; color: white;")
+
+        self.layout.addWidget(top)
+        self.layout.addWidget(clk)
 
     def add_web_widget(self):
         self.web_widget = WebPage("8", "North", "2350")
-
-        self.setCentralWidget(self.web_widget)
+        self.layout.addWidget(self.web_widget)
+        self.layout.addStretch(1)
 
 
 if __name__ == "__main__":
