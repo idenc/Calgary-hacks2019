@@ -1,7 +1,9 @@
+from PyQt5.QtCore import QRect, Qt
+
 import clock
 import sys
 import map
-import pygame #install as module
+import pygame  # install as module
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
@@ -54,27 +56,50 @@ class MainWindow(QWidget):
         sounda = pygame.mixer.Sound("siren.wav")
         sounda.play()
 
-
-
     def add_bottom(self):
         bot = QFrame()
         bot.setFrameShape(QFrame.WinPanel)
         bot.setFrameShadow(QFrame.Raised)
-        bot.setMinimumSize(100, 150)
-        bot.setStyleSheet("background-color: red;")
+        bot.setMinimumSize(200, 200)
+        bot.setStyleSheet("background-color: white;")
+
+        bus1_img = QPixmap('8.png')
+        bus2_img = QPixmap('303.png')
+        bus3_img = QPixmap('308.png')
+
+        la = QVBoxLayout(bot)
+
+        self.add_bus(8, la)
+        self.add_bus(303, la)
+        self.add_bus(308, la)
+
+        self.add_emer_button(bot)
 
         self.layout.addWidget(bot)
-        # self.layout.addStretch(1)
-
-        emer_button = QPushButton('Request Help')
-        emer_button.clicked.connect(self.emergency_button)
-        self.layout.addWidget(emer_button)
-        # self.layout.addStretch(1)
 
     def add_web_widget(self):
         self.web_widget = map.WebPage("2350")
         self.layout.addWidget(self.web_widget)
 
+    def add_emer_button(self, bot):
+        emer_button = QPushButton('Request Help')
+        emer_button.clicked.connect(self.emergency_button)
+        emer_button.setStyleSheet("color: white; background-color: red;")
+        emer_button.setFixedHeight(100)
+        emer_button.setFixedWidth(100)
+        rect = QRect(0, 0, 100, 100)
+        region = QRegion(rect, QRegion.Ellipse)
+        emer_button.setMask(region)
+        emer_button.setParent(bot)
+        emer_button.move(900, 320)
+
+    def add_bus(self, num, layout):
+        bus_img = QPixmap(str(num) + '.png')
+
+        bus = QLabel()
+        bus.setPixmap(bus_img)
+        bus.setFixedSize(bus_img.size())
+        layout.addWidget(bus)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
