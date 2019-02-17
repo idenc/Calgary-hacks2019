@@ -1,8 +1,8 @@
 import clock
 import sys
-import PyQt5.uic
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import *
 
 
@@ -42,25 +42,41 @@ class WebPage(QWebEngineView):
 
 
 class MainWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, screen, parent=None):
         # Initialize the Main Window
         super(MainWindow, self).__init__(parent)
-        self.create_menu()
+        self.screen = QDesktopWidget.screenGeometry(screen)
+        self.create_layout()
+        self.add_head()
         self.add_web_widget()
         self.setLayout(self.layout)
         self.show()
 
-    def create_menu(self):
+    def create_layout(self):
         self.layout = QVBoxLayout()
-        top = QWidget()
-        top.setMinimumSize(400, 400)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+
+    def add_head(self):
+        top = QFrame()
+        top.setFrameShape(QFrame.WinPanel)
+        top.setFrameShadow(QFrame.Raised)
+        top.setMinimumSize(100, 100)
         top.setStyleSheet("background-color: red;")
+
         clk = clock.Clock(parent=top)
         clk.setFrameShape(QFrame.NoFrame)
         clk.setStyleSheet("background-color:none; color: white;")
+        clk.move(-75, -75)
+        clk.setMinimumWidth(250)
+        clk.setMinimumHeight(250)
 
+        weather = QLabel(top)
+        weather.setFont(QFont("Times", 42, QFont.Bold))
+        #weather.setMinimumHeight(50)
+        #weather.setMinimumWidth(180)
+        weather.setText("<font color='white'>-15°</font>")
+        weather.move(self.screen.width() - 130, 11)
         self.layout.addWidget(top)
-        self.layout.addWidget(clk)
 
     def add_web_widget(self):
         self.web_widget = WebPage("8", "North", "2350")
@@ -70,7 +86,8 @@ class MainWindow(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    desktop = QApplication.desktop()
     app.setApplicationDisplayName("Calgary Transit Kiosk")
-    main_window = MainWindow()
+    main_window = MainWindow(desktop)
     main_window.showMaximized()
     sys.exit(app.exec_())  # only need one app, one running event loop
