@@ -49,9 +49,10 @@ class MainWindow(QWidget):
         self.create_layout()
         self.add_head()
         self.add_web_widget()
-        self.add_footer()
+        self.add_bottom()
         self.setLayout(self.layout)
         self.show()
+
 
     def create_layout(self):
         self.layout = QVBoxLayout()
@@ -61,7 +62,7 @@ class MainWindow(QWidget):
         top = QFrame()
         top.setFrameShape(QFrame.WinPanel)
         top.setFrameShadow(QFrame.Raised)
-        top.setMaximumHeight(100)
+        top.setMinimumSize(100, 100)
         top.setStyleSheet("background-color: red;")
 
         clk = clock.Clock(parent=top)
@@ -73,20 +74,35 @@ class MainWindow(QWidget):
 
         weather = QLabel(top)
         weather.setFont(QFont("Times", 42, QFont.Bold))
+        #weather.setMinimumHeight(50)
+        #weather.setMinimumWidth(180)
         weather.setText("<font color='white'>-15°</font>")
         weather.move(self.screen.width() - 130, 11)
         self.layout.addWidget(top)
 
-    def add_footer(self):
-        bottom = QFrame()
-        bottom.setStyleSheet("background-color: white;")
-        bottom.setMinimumSize(200, 200)
-        self.layout.addWidget(bottom)
+    def emergency_button(self):
+        print("Emergency")
+
+    def add_bottom(self):
+        bot = QFrame()
+        bot.setFrameShape(QFrame.WinPanel)
+        bot.setFrameShadow(QFrame.Raised)
+        bot.setMinimumSize(100, 150)
+        bot.setStyleSheet("background-color: red;")
+
+        self.layout.addWidget(bot)
+        self.layout.addStretch(1)
+
+        emer_button = QPushButton('Request Help')
+        emer_button.clicked.connect(self.emergency_button)
+        self.layout.addWidget(emer_button)
+        self.layout.addStretch(1)
 
     def add_web_widget(self):
         self.web_widget = WebPage("8", "North", "2350")
         self.layout.addWidget(self.web_widget)
-        #self.layout.addStretch(1)
+        self.layout.addStretch(1)
+
 
 
 if __name__ == "__main__":
