@@ -1,44 +1,8 @@
 import clock
 import sys
+import map
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWebEngineWidgets import *
-
-
-class WebPage(QWebEngineView):
-    def on_load_finished(self):
-        self.page().runJavaScript(
-            "document.getElementsByClassName('LocationInputAutoComplete ui-autocomplete-input')[0].value = '" + self.stop_num + "';")
-        self.page().runJavaScript(
-            "document.getElementsByClassName('LocationInputAutoComplete ui-autocomplete-input')[0].focus();")
-        command = """
-        function eventFire(el, etype){
-          if (el.fireEvent) {
-            el.fireEvent('on' + etype);
-          } else {
-            var evObj = document.createEvent('Events');
-            evObj.initEvent(etype, true, false);
-            el.dispatchEvent(evObj);
-          }
-        };
-        eventFire(document.getElementById("TravelPlansMenuItem"), 'click');
-        document.getElementsByClassName('LocationInputAutoComplete ui-autocomplete-input')[0].focus();
-        eventFire(document.getElementById("TravelPlansMenuItem"), 'keydown');
-        eventFire(document.getElementById("TravelPlansMenuItem"), 'keypress');
-        """
-        self.page().runJavaScript(command)
-        print("Url Loaded")
-
-    def __init__(self, bus, direction, stop_num):
-        QWebEngineView.__init__(self)
-        self.stop_num = stop_num
-        self.settings().setAttribute(QWebEngineSettings.FullScreenSupportEnabled, True)
-
-        self.load(QUrl("http://hastinfoweb.calgarytransit.com/hastinfoweb2/NextDepartures?StopFilterIdentifier=" + bus +
-                       "~~" + direction + "&StopFilterType=RouteDirection&StopIdentifier=" + stop_num + "&IsEmbedded"
-                                                                                                        "=true"))
-        self.loadFinished.connect(self.on_load_finished)
 
 
 class MainWindow(QWidget):
@@ -71,6 +35,11 @@ class MainWindow(QWidget):
         clk.setMinimumWidth(250)
         clk.setMinimumHeight(250)
 
+        next_bus = QLabel(top)
+        next_bus.setFont(QFont("Times", 42, QFont.Bold))
+        next_bus.setText("<font color='white'>Next Bus: #20 in 15 minutes</font>")
+        next_bus.move(int(self.screen.width() / 2) - 400, 11)
+
         weather = QLabel(top)
         weather.setFont(QFont("Times", 42, QFont.Bold))
         weather.setText("<font color='white'>-15°</font>")
@@ -84,9 +53,9 @@ class MainWindow(QWidget):
         self.layout.addWidget(bottom)
 
     def add_web_widget(self):
-        self.web_widget = WebPage("8", "North", "2350")
+        self.web_widget = map.WebPage("2350")
         self.layout.addWidget(self.web_widget)
-        #self.layout.addStretch(1)
+        # self.layout.addStretch(1)
 
 
 if __name__ == "__main__":
