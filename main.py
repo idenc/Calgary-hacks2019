@@ -13,7 +13,7 @@ class MainWindow(QWidget):
         self.create_layout()
         self.add_head()
         self.add_web_widget()
-        self.add_footer()
+        self.add_bottom()
         self.setLayout(self.layout)
         self.show()
 
@@ -57,12 +57,12 @@ class MainWindow(QWidget):
         bot.setStyleSheet("background-color: red;")
 
         self.layout.addWidget(bot)
-        self.layout.addStretch(1)
+        # self.layout.addStretch(1)
 
         emer_button = QPushButton('Request Help')
         emer_button.clicked.connect(self.emergency_button)
         self.layout.addWidget(emer_button)
-        self.layout.addStretch(1)
+        # self.layout.addStretch(1)
 
     def add_web_widget(self):
         self.web_widget = map.WebPage("2350")
