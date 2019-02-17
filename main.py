@@ -39,14 +39,14 @@ class MainWindow(QWidget):
         clk.setMinimumHeight(250)
 
         next_bus = QLabel(top)
-        next_bus.setFont(QFont("Times", 42, QFont.Bold))
+        next_bus.setFont(QFont("Sans-serif", 42, QFont.Bold))
         next_bus.setText("<font color='white'>Next Bus: #20 in 15 minutes</font>")
-        next_bus.move(int(self.screen.width() / 2) - 400, 11)
+        next_bus.move(int(self.screen.width() / 2) - 400, 25)
 
         weather = QLabel(top)
-        weather.setFont(QFont("Times", 42, QFont.Bold))
+        weather.setFont(QFont("Sans-serif", 42, QFont.Bold))
         weather.setText("<font color='white'>-15°</font>")
-        weather.move(self.screen.width() - 130, 11)
+        weather.move(self.screen.width() - 130, 25)
         self.layout.addWidget(top)
 
     def emergency_button(self):
