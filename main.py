@@ -1,6 +1,7 @@
 import clock
 import sys
 import map
+import pygame #install as module
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
@@ -48,6 +49,12 @@ class MainWindow(QWidget):
 
     def emergency_button(self):
         print("Emergency")
+        pygame.init()
+        pygame.mixer.init()
+        sounda = pygame.mixer.Sound("siren.wav")
+        sounda.play()
+
+
 
     def add_bottom(self):
         bot = QFrame()
