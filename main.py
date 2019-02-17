@@ -46,16 +46,27 @@ class MainWindow(QWidget):
         weather.move(self.screen.width() - 130, 11)
         self.layout.addWidget(top)
 
-    def add_footer(self):
-        bottom = QFrame()
-        bottom.setStyleSheet("background-color: white;")
-        bottom.setMinimumSize(200, 200)
-        self.layout.addWidget(bottom)
+    def emergency_button(self):
+        print("Emergency")
+
+    def add_bottom(self):
+        bot = QFrame()
+        bot.setFrameShape(QFrame.WinPanel)
+        bot.setFrameShadow(QFrame.Raised)
+        bot.setMinimumSize(100, 150)
+        bot.setStyleSheet("background-color: red;")
+
+        self.layout.addWidget(bot)
+        self.layout.addStretch(1)
+
+        emer_button = QPushButton('Request Help')
+        emer_button.clicked.connect(self.emergency_button)
+        self.layout.addWidget(emer_button)
+        self.layout.addStretch(1)
 
     def add_web_widget(self):
         self.web_widget = map.WebPage("2350")
         self.layout.addWidget(self.web_widget)
-        # self.layout.addStretch(1)
 
 
 if __name__ == "__main__":
