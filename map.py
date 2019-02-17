@@ -15,4 +15,3 @@ class WebPage(QWebEngineView):
 
         self.load(QUrl(
             "http://hastinfoweb.calgarytransit.com/hastinfoweb2/NextDepartures?StopIdentifier=" + stop_num + "&IsEmbedded=true"))
-        self.loadFinished.connect(self.on_load_finished)

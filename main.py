@@ -1,11 +1,16 @@
-from PyQt5.QtCore import QRect, Qt
-
 import clock
 import sys
 import map
 import pygame  # install as module
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from PyQt5.QtCore import QRect
+from darksky import forecast
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 
 
 class MainWindow(QWidget):
@@ -13,12 +18,39 @@ class MainWindow(QWidget):
         # Initialize the Main Window
         super(MainWindow, self).__init__(parent)
         self.screen = QDesktopWidget.screenGeometry(screen)
+        self.get_info()
         self.create_layout()
         self.add_head()
         self.add_web_widget()
         self.add_bottom()
         self.setLayout(self.layout)
         self.show()
+
+    def get_info(self):
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
+        browser = webdriver.Chrome('C:\Windows\chromedriver.exe', chrome_options=options)
+
+        browser.get("https://hastinfoweb.calgarytransit.com/hastinfoweb2/NextDepartures?StopIdentifier=2350")
+        browser.switch_to.frame(browser.find_element_by_tag_name("iframe"))
+        delay = 10  # seconds
+        try:
+            wait = WebDriverWait(browser, 100)
+            men_menu = wait.until(
+                EC.visibility_of_element_located((By.XPATH, "//*[@id='NextPassingTimesSuggestions']")))
+            print("Page is ready!")
+        except TimeoutException:
+            print("Loading took too much time!")
+
+        x = browser.find_elements_by_class_name("RoutePublicIdentifier")
+
+        y = browser.find_elements_by_class_name("NextPassingTimesTime")
+        self.l = []
+        i = 0
+        for a in x:
+            self.l.append((a.text, y[i].text))
+            i += 6
+        browser.close()
 
     def create_layout(self):
         self.layout = QVBoxLayout()
@@ -40,12 +72,16 @@ class MainWindow(QWidget):
 
         next_bus = QLabel(top)
         next_bus.setFont(QFont("Sans-serif", 42, QFont.Bold))
-        next_bus.setText("<font color='white'>Next Bus: #20 in 15 minutes</font>")
+        bus = self.l[0][0]
+        time = self.l[0][1]
+        next_bus.setText("<font color='white'>Next Bus: " + bus + " in " + time + "</font>")
         next_bus.move(int(self.screen.width() / 2) - 400, 25)
 
         weather = QLabel(top)
         weather.setFont(QFont("Sans-serif", 42, QFont.Bold))
-        weather.setText("<font color='white'>-15°</font>")
+        w = forecast('c505a8dedfcf4bc235046f56138a67d9', 51.0253, -114.0499)
+        temp = round(w['currently']['temperature'])
+        weather.setText("<font color='white'>" + str(temp) + "°</font>")
         weather.move(self.screen.width() - 130, 25)
         self.layout.addWidget(top)
 
@@ -62,10 +98,6 @@ class MainWindow(QWidget):
         bot.setFrameShadow(QFrame.Raised)
         bot.setMinimumSize(200, 200)
         bot.setStyleSheet("background-color: white;")
-
-        bus1_img = QPixmap('8.png')
-        bus2_img = QPixmap('303.png')
-        bus3_img = QPixmap('308.png')
 
         la = QVBoxLayout(bot)
 
@@ -100,6 +132,7 @@ class MainWindow(QWidget):
         bus.setPixmap(bus_img)
         bus.setFixedSize(bus_img.size())
         layout.addWidget(bus)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
